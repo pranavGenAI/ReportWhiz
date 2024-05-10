@@ -1,5 +1,6 @@
 import streamlit as st
 import base64
+import PyPDF2
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
@@ -11,22 +12,25 @@ from langchain.prompts import PromptTemplate
 from langchain_community.vectorstores import FAISS
 from langchain.memory import ConversationSummaryBufferMemory
 from langchain.chains import LLMChain
-from reportlab.pdfgen import canvas
-from reportlab.lib import colors 
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
-from reportlab.platypus import Paragraph, Frame, SimpleDocTemplate
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import Paragraph
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import BaseDocTemplate, PageTemplate, Flowable, FrameBreak, KeepTogether, PageBreak, Spacer
+from reportlab.platypus import Frame, PageTemplate, KeepInFrame
+from reportlab.lib.units import cm
+from reportlab.platypus import (Table, TableStyle, BaseDocTemplate)
 
 
 st.set_page_config(page_title="BidBooster ", layout="wide")
 
 st.markdown("""
-## BidBooster 🤗💬: Answers your RFP related query.
+## ReportWiz 📋💬: Report Generation Tool!.
 
 ### How It Works?
 
 Follow these simple steps to interact with the chatbot:
-1. **Upload the RFP document and click on submit & process** (Please note: the base LLM model is fine-tuned on LCBO ESG RFP documents. Results may vary for other documents).
-2. **Ask a Question:** Once the document is processed, ask any question related to its content for a precise answer.
+1. **Upload the document and click on submit & process** (Please note: the base LLM model is fine-tuned on LCBO ESG RFP documents. Results may vary for other documents).
+2. **Ask a Question:** Once the document is processed, provide the requirements to generate report
 3. Ensure your **prompt is clear and complete** with some context for better result.
 """)
 #st.image("https://media1.tenor.com/m/6o864GYN6wUAAAAC/interruption-sorry.gif", width=1000)
@@ -35,7 +39,6 @@ st.image("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjl2dGNiYThobHplMG81
 
 # This is the first API key input; no need to repeat it in the main function.
 api_key = st.secrets['GEMINI_API_KEY']
-
 if 'responses' not in st.session_state:
     st.session_state['responses'] = ["How can I assist you?"]
 
@@ -63,15 +66,17 @@ def get_vector_store(text_chunks, api_key):
 
 def get_conversational_chain():
     prompt_template = """
-    Answer the question as detailed as possible from the provided context. Change the wording of answer and start in the most polite way. Write the summary of answer and then provide the detail answer. Start with polite and nice statement. You can use greetings if you want. Don't provide the wrong answer. If you are giving answer and not using context to frame the answer then let the user know that the answer is not from the context.\n\n. And remember to format your answer in nicer way. End your response with disclaimer telling about the answer is from the context. Remember to be polite and start answer with assistant greetings. 
-    Context:\n {context}?\n
-    Question: \n{question}\n .Make sure you are summarizing and changing the wording of context before you write answer in easy to understand language and format it in better way. Provide the disclaimer in best possible way at the of question saying the answer is based on the context and accuracy needs to be checked from the source.
-
+    While generating the response ensure that you format it as instructed. Break the line using the tag <BR/> and bold by inserting <b> </b> whenever required and write it in your response text.And provide the output with these tags. 
+    <BR/> shall be used when you want to break the line and start on new line.
+    If you want to bold some words write them inside these tags: <b> </b> 
+    You must always use the above tags in your response no matter what. And use them only where it will make the result look good.
+    Here is the context: \n {context}?\n
+    Now answer the question based on the context and add format tags as well: \n{question}\n 
     Answer:
     """
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3, google_api_key=api_key)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
-    print("Prompt ***** --->", prompt)
+    #print("Prompt ***** --->", prompt)
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
     return chain
 
@@ -83,45 +88,45 @@ def user_input(user_question, api_key):
                 docs = new_db.similarity_search(user_question)
                 chain = get_conversational_chain()
                 response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
-                para_ = response
-                fileName = 'C:/Users/pranav.baviskar/Desktop/Learning/GenAI/BidBooster/out2.pdf'
-                context_user_question = "Only Suggest the title for the text and enclose it within the tag <b> </b>: " + response
-                subTitle = chain(context_user_question=context_user_question)
+                print("Response is....",response)
+                para_ = response['output_text']
+                response = response['output_text']
+                fileName = '/workspaces/bidbooster_chain/output/output.pdf'
+                context_user_question = "Suggest the 6 word title for the text. Do not use tags while framing this response: " + response
+                subTitle = chain({"input_documents": docs,"question": context_user_question}, return_only_outputs=True)
+                subTitle = subTitle['output_text']
                 subTitle = subTitle.replace("*","")
+                subTitle = subTitle.replace("<b>","")
+                subTitle = subTitle.replace("</b>","")
                 para_ = para_.replace("*","")
                 print("para_ printed here-------------------->>>",para_)
                 # creating a pdf object 
-                pdf = canvas.Canvas(fileName) 
+              #  flow_obj = []
                 
-                # setting the title of the document 
-                pdf.setTitle(documentTitle) 
-                pdf.setFillColorRGB(0, 0, 0) 
-                #pdf.setFont("Graphik-Bold", 24) 
-                pdf.drawCentredString(290, 820, subTitle) 
-            
-                # drawing a line 
-                pdf.line(30, 810, 550, 810) 
-                    
-                # creating a multiline text using 
-                # textline and for loop 
-                text = pdf.beginText(40, 680) 
-                text.setFont("Times-Roman", 13) 
-                text.setFillColor(colors.black) 
-                # for font in pdf.getAvailableFonts():
-                #     print(font)
-                #     pdf.setFont(font, 18)
-                #     pdf.setFont("Helvetica", 18)
-                flow_obj = []
-            
-                styles = getSampleStyleSheet()
-            
-                text = para_
-                p_text = Paragraph(text, style=styles["Normal"])
-                flow_obj.append(p_text)
-                frame = Frame(50,50,500,750, showBoundary=1)
-                frame.addFromList(flow_obj,pdf)
-                pdf.save()                
-                st.write("Report Generated Successfully. Please check directory ", out)
+                pdf = BaseDocTemplate("/workspaces/bidbooster_chain/output/output.pdf", title = "Reported by ReportWHiz", pagesize=letter)
+                text_frame =  Frame(50,50,500,650, leftPadding= 30, rightPadding= 0,showBoundary=1)
+                frame = Frame(50,700,500,30, bottomPadding= 0,showBoundary = 0)
+                imageframe = Frame(20,710,110,40, bottomPadding= 0,showBoundary = 0)
+                
+                parts=[]
+                M = Paragraph('''<img src="/workspaces/bidbooster_chain/accenture_logo.jpg" width="50" height="50"/>''')
+                parts.append(M)             
+                
+                subTitle = "<strong> <font size = 20>" + subTitle + "</font> </strong><br/>"
+                K = Paragraph(subTitle)
+                parts.append(K)
+
+                L = Paragraph(para_)
+                parts.append(L)
+
+                frontpage = PageTemplate(id='FrontPage',
+                             frames=[imageframe, frame, text_frame]
+                             )
+
+                pdf.addPageTemplates(frontpage)
+                pdf.build(parts)
+               
+                st.write("Report Generated Successfully. Please check directory ", fileName)
                 st.success("Report Delivered to the location !!!")
 
 def get_conversation_string():
@@ -132,23 +137,23 @@ def get_conversation_string():
         conversation_string += "Bot: "+ st.session_state['responses'][i+1] + "\n"
     return conversation_string
 
-def query_refiner(conversation, user_question):
-    prompt=f"""
-    Given the following user query and conversation log, formulate a question that would be the most relevant to provide the user with an answer from a knowledge base.\n\nCONVERSATION LOG: \n{conversation}\n\nQuery: {user_question}\n\nRefined Query:"
+# def query_refiner(conversation, user_question):
+#     prompt=f"""
+#     Given the following user query and conversation log, formulate a question that would be the most relevant to provide the user with an answer from a knowledge base.\n\nCONVERSATION LOG: \n{conversation}\n\nQuery: {user_question}\n\nRefined Query:"
 
-    """
+#     """
     
-    prompt = PromptTemplate(template=prompt, input_variables=["conversation","user_question"])
-    print("Prompt is....",prompt)
-    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3, google_api_key=api_key)
-    chat_llm_chain = LLMChain(
-        llm=model,
-        prompt=prompt,
-        verbose=True
-    )    
-    response = chat_llm_chain.predict(user_question=user_question)
-    print("Response of refined query is ----->",response)
-    return response
+#     prompt = PromptTemplate(template=prompt, input_variables=["conversation","user_question"])
+#     print("Prompt is....",prompt)
+#     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3, google_api_key=api_key)
+#     chat_llm_chain = LLMChain(
+#         llm=model,
+#         prompt=prompt,
+#         verbose=True
+#     )    
+#     response = chat_llm_chain.predict(user_question=user_question)
+#     print("Response of refined query is ----->",response)
+#     return response
 
 st.markdown("""
 <style>
@@ -160,28 +165,28 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def main():
-    st.header("BidBooster Chatbot")
+    st.header("ReportWiz Tool")
 
-    user_question = st.text_input("Ask a Question from the RFP Files", key="user_question")
+    user_question = st.text_input("What report do you want to generate?", key="user_question")
 
     if user_question and api_key:  # Ensure API key and user question are provided
         user_input(user_question, api_key)
-        if user_question:
-            with st.spinner("thinking ..."):
-                conversation_string = get_conversation_string()
-                # st.code(conversation_string)
-                refined_query = query_refiner(conversation_string, user_question)
-                st.markdown('<p class="small-font">---------------------------------------------------------------------------------------------------------------------</p>', unsafe_allow_html=True)
+    #     if user_question:
+    #          with st.spinner("thinking ..."):
+    #              conversation_string = get_conversation_string()
+    #              # st.code(conversation_string)
+    # #             refined_query = query_refiner(conversation_string, user_question)
+    #             st.markdown('<p class="small-font">---------------------------------------------------------------------------------------------------------------------</p>', unsafe_allow_html=True)
                 
-                st.markdown('<p class="small-font">Query Suggestion!!</p>', unsafe_allow_html=True)
-                query_suggestion = "Your query suggestion here"
-                st.markdown(f'<p class="small-font">{refined_query}</p>', unsafe_allow_html=True)
-                #st.write(refined_query)
+    #             st.markdown('<p class="small-font">Query Suggestion!!</p>', unsafe_allow_html=True)
+    #             query_suggestion = "Your query suggestion here"
+    #             st.markdown(f'<p class="small-font">{refined_query}</p>', unsafe_allow_html=True)
+    #             #st.write(refined_query)
 
 
     with st.sidebar:
-        st.title("BidBooster 🤗💬")
-        pdf_docs = st.file_uploader("Upload your RFP Files and Click on the Submit & Process Button", accept_multiple_files=True, key="pdf_uploader")
+        st.title("ReportWiz 📋💬")
+        pdf_docs = st.file_uploader("Upload your Files and Click on the Submit & Process Button", accept_multiple_files=True, key="pdf_uploader")
         if st.button("Submit & Process", key="process_button") and api_key:  # Check if API key is provided before processing
             with st.spinner("Reading & Processing Content..."):
                 raw_text = get_pdf_text(pdf_docs)

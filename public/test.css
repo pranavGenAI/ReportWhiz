@@ -1,7 +1,0 @@
-a[href*='https://github.com/Chainlit/chainlit'] {
-    visibility: hidden;
-}
-
-img[src^="http://localhost:5998/logo"] {
-    display: none;
-}

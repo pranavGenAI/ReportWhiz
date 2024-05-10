@@ -1,5 +1,7 @@
 import streamlit as st
 import base64
+
+import reportlab
 #Import
 import PyPDF2
 from PyPDF2 import PdfReader

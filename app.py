@@ -48,6 +48,7 @@ if 'responses' not in st.session_state:
 if 'requests' not in st.session_state:
     st.session_state['requests'] = []
 
+st.button("Generate Report", type="primary", key ="generate")
 
 def get_pdf_text(pdf_docs):
     text = ""
@@ -107,7 +108,7 @@ def user_input(user_question, api_key):
               #  flow_obj = []
                 
                 pdf = BaseDocTemplate("output.pdf", title = "Reported by ReportWHiz", pagesize=letter)
-                text_frame =  Frame(50,50,500,650, leftPadding= 30, rightPadding= 0,showBoundary=1)
+                text_frame =  Frame(50,50,500,650, leftPadding= 30, rightPadding= 20,showBoundary=1)
                 frame = Frame(50,700,500,30, bottomPadding= 0,showBoundary = 0)
                 imageframe = Frame(20,710,110,40, bottomPadding= 0,showBoundary = 0)
                 
@@ -174,7 +175,7 @@ def main():
     st.header("ReportWiz Tool")
 
     user_question = st.text_input("What report do you want to generate?", key="user_question")
-    if st.button('Generate Report'):
+    if st.button("Generate Report"):
         if user_question and api_key:  # Ensure API key and user question are provided
             user_input(user_question, api_key)
 

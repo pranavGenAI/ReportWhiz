@@ -130,7 +130,7 @@ def user_input(user_question, api_key):
                 pdf.addPageTemplates(frontpage)
                 pdf.build(parts)
                 with open("output.pdf", "rb") as f:
-                    st.download_button("Download pdf", f, "output.pdf")
+                    st.download_button("Download Report from here!!", f, "output.pdf")
     
                 st.write("Report Generated Successfully. Please check directory ", fileName)
                 st.success("Report Delivered to the location !!!")

@@ -30,8 +30,8 @@ decorator==5.1.1
 defusedxml==0.7.1
 exceptiongroup==1.2.0
 executing==2.0.1
-faiss-cpu==1.8.0
-faiss-gpu==1.7.2
+#faiss-cpu==1.8.0
+#faiss-gpu==1.7.2
 fastjsonschema==2.19.1
 filelock==3.13.3
 fonttools==4.50.0

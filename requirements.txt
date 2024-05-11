@@ -1,4 +1,5 @@
 faiss-cpu
+faiss-gpu
 aiohttp
 aiosignal
 altair

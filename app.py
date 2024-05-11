@@ -174,20 +174,10 @@ def main():
     st.header("ReportWiz Tool")
 
     user_question = st.text_input("What report do you want to generate?", key="user_question")
+    if st.button('Generate Report'):
+        if user_question and api_key:  # Ensure API key and user question are provided
+            user_input(user_question, api_key)
 
-    if user_question and api_key:  # Ensure API key and user question are provided
-        user_input(user_question, api_key)
-    #     if user_question:
-    #          with st.spinner("thinking ..."):
-    #              conversation_string = get_conversation_string()
-    #              # st.code(conversation_string)
-    # #             refined_query = query_refiner(conversation_string, user_question)
-    #             st.markdown('<p class="small-font">---------------------------------------------------------------------------------------------------------------------</p>', unsafe_allow_html=True)
-                
-    #             st.markdown('<p class="small-font">Query Suggestion!!</p>', unsafe_allow_html=True)
-    #             query_suggestion = "Your query suggestion here"
-    #             st.markdown(f'<p class="small-font">{refined_query}</p>', unsafe_allow_html=True)
-    #             #st.write(refined_query)
 
 
     with st.sidebar:

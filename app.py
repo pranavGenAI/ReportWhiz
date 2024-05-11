@@ -106,7 +106,7 @@ def user_input(user_question, api_key):
                 # creating a pdf object 
               #  flow_obj = []
                 
-                pdf = BaseDocTemplate("/workspaces/bidbooster_chain/output/output.pdf", title = "Reported by ReportWHiz", pagesize=letter)
+                pdf = BaseDocTemplate("output.pdf", title = "Reported by ReportWHiz", pagesize=letter)
                 text_frame =  Frame(50,50,500,650, leftPadding= 30, rightPadding= 0,showBoundary=1)
                 frame = Frame(50,700,500,30, bottomPadding= 0,showBoundary = 0)
                 imageframe = Frame(20,710,110,40, bottomPadding= 0,showBoundary = 0)
@@ -129,7 +129,9 @@ def user_input(user_question, api_key):
 
                 pdf.addPageTemplates(frontpage)
                 pdf.build(parts)
-               
+                with open("output.pdf", "rb") as f:
+                    st.download_button("Download pdf", f, "output.pdf")
+    
                 st.write("Report Generated Successfully. Please check directory ", fileName)
                 st.success("Report Delivered to the location !!!")
 

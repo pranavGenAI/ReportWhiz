@@ -112,7 +112,7 @@ def user_input(user_question, api_key):
                 imageframe = Frame(20,710,110,40, bottomPadding= 0,showBoundary = 0)
                 
                 parts=[]
-                M = Paragraph('''<img src="https://1000logos.net/wp-content/uploads/2021/12/Accenture-logo.jpg" width="50" height="50"/>''')
+                M = Paragraph('''<img src="/workspaces/bidbooster_chain/accenture_logo.jpg" width="50" height="50"/>''')
                 parts.append(M)             
                 
                 subTitle = "<strong> <font size = 20>" + subTitle + "</font> </strong><br/>"

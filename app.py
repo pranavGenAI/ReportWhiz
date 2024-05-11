@@ -113,6 +113,7 @@ def user_input(user_question, api_key):
                 
                 parts=[]
               #  M = Paragraph('''<img src="/workspaces/bidbooster_chain/accenture_logo.jpg" width="50" height="50"/>''')
+                M = Paragraph('''Logo here''')
                 parts.append(M)             
                 
                 subTitle = "<strong> <font size = 20>" + subTitle + "</font> </strong><br/>"

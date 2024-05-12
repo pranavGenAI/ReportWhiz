@@ -1,9 +1,7 @@
 import streamlit as st
 import base64
-
-import reportlab
-#Import
 import PyPDF2
+import reportlab
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
@@ -24,7 +22,7 @@ from reportlab.lib.units import cm
 from reportlab.platypus import (Table, TableStyle, BaseDocTemplate)
 
 
-st.set_page_config(page_title="BidBooster ", layout="wide")
+st.set_page_config(page_title="Report Generator ", layout="wide")
 
 st.markdown("""
 ## ReportWiz 📋💬: Report Generation Tool!.
@@ -41,18 +39,20 @@ st.image("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjl2dGNiYThobHplMG81
 
 
 # This is the first API key input; no need to repeat it in the main function.
-api_key = st.secrets['GEMINI_API_KEY']
+#api_key = st.secrets['GEMINI_API_KEY']
+api_key = 'AIzaSyAJT6_IYPjUtUyT14uzZ8BSON7rDul7Ab8'
+
 if 'responses' not in st.session_state:
     st.session_state['responses'] = ["How can I assist you?"]
 
 if 'requests' not in st.session_state:
     st.session_state['requests'] = []
 
-st.button("Generate Report", type="primary", key ="generate")
 
 def get_pdf_text(pdf_docs):
     text = ""
     for pdf in pdf_docs:
+        print("Reading PDF --->", pdf)
         pdf_reader = PdfReader(pdf)
         for page in pdf_reader.pages:
             text += page.extract_text()
@@ -70,17 +70,18 @@ def get_vector_store(text_chunks, api_key):
 
 def get_conversational_chain():
     prompt_template = """
-    While generating the response ensure that you format it as instructed. Break the line using the tag <BR/> and bold by inserting <b> </b> whenever required and write it in your response text.And provide the output with these tags. 
-    <BR/> shall be used when you want to break the line and start on new line.
-    If you want to bold some words write them inside these tags: <b> </b> 
-    You must always use the above tags in your response no matter what. And use them only where it will make the result look good.
+    While generating the response ensure that you format it as instructed. Break the line using the tag <BR/> and bold by inserting <b> </b> whenever required and write it in your response text.And provide the output with these tags.
+    Rules of formatting:
+    1. Breakline tag: <BR/> shall be used when you want to break the line and start on new line.
+    2. Bold text tag: If you want to bold some words write them inside these tags: <b> </b> 
+    You must always use the above tags in your response no matter what.
     Here is the context: \n {context}?\n
-    Now answer the question based on the context and add format tags as well: \n{question}\n 
+    Based on the context asnwer the question and remember to convert the answer to most easily understandable language. Add format tags breakline <BR/> and bold <b> </b>. Remember to bold all the main points it is must: \n{question}\n 
     Answer:
     """
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3, google_api_key=api_key)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
-    #print("Prompt ***** --->", prompt)
+    print("Prompt ***** --->", prompt)
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
     return chain
 
@@ -107,14 +108,13 @@ def user_input(user_question, api_key):
                 # creating a pdf object 
               #  flow_obj = []
                 
-                pdf = BaseDocTemplate("output.pdf", title = "Reported by ReportWHiz", pagesize=letter)
-                text_frame =  Frame(50,50,500,650, leftPadding= 30, rightPadding= 20,showBoundary=1)
+                pdf = BaseDocTemplate("/workspaces/bidbooster_chain/output/output.pdf", title = "Reported by ReportWHiz", pagesize=letter)
+                text_frame =  Frame(50,50,500,650, leftPadding= 30, rightPadding= 30,showBoundary=1)
                 frame = Frame(50,700,500,30, bottomPadding= 0,showBoundary = 0)
                 imageframe = Frame(20,710,110,40, bottomPadding= 0,showBoundary = 0)
                 
                 parts=[]
-              #  M = Paragraph('''<img src="/workspaces/bidbooster_chain/accenture_logo.jpg" width="50" height="50"/>''')
-                M = Paragraph('''Logo here''')
+                M = Paragraph('''<img src="/workspaces/bidbooster_chain/accenture_logo.jpg" width="50" height="50"/>''')
                 parts.append(M)             
                 
                 subTitle = "<strong> <font size = 20>" + subTitle + "</font> </strong><br/>"
@@ -130,11 +130,14 @@ def user_input(user_question, api_key):
 
                 pdf.addPageTemplates(frontpage)
                 pdf.build(parts)
-                with open("output.pdf", "rb") as f:
-                    st.download_button("Download Report from here!!", f, "output.pdf")
-    
+                
                 st.write("Report Generated Successfully. Please check directory ", fileName)
                 st.success("Report Delivered to the location !!!")
+
+fname = "/workspaces/bidbooster_chain/output/output.pdf"
+with open(fname, "rb") as f:
+    st.download_button("Download Report from here!!", f, fname)
+
 
 def get_conversation_string():
     conversation_string = ""
@@ -175,10 +178,20 @@ def main():
     st.header("ReportWiz Tool")
 
     user_question = st.text_input("What report do you want to generate?", key="user_question")
-    if st.button("Generate Report"):
-        if user_question and api_key:  # Ensure API key and user question are provided
-            user_input(user_question, api_key)
 
+    if user_question and api_key:  # Ensure API key and user question are provided
+        user_input(user_question, api_key)
+    #     if user_question:
+    #          with st.spinner("thinking ..."):
+    #              conversation_string = get_conversation_string()
+    #              # st.code(conversation_string)
+    # #             refined_query = query_refiner(conversation_string, user_question)
+    #             st.markdown('<p class="small-font">---------------------------------------------------------------------------------------------------------------------</p>', unsafe_allow_html=True)
+                
+    #             st.markdown('<p class="small-font">Query Suggestion!!</p>', unsafe_allow_html=True)
+    #             query_suggestion = "Your query suggestion here"
+    #             st.markdown(f'<p class="small-font">{refined_query}</p>', unsafe_allow_html=True)
+    #             #st.write(refined_query)
 
 
     with st.sidebar:

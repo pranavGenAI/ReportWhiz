@@ -1,7 +1,5 @@
 import streamlit as st
-import base64
-import PyPDF2
-import reportlab
+import re
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
@@ -20,7 +18,7 @@ from reportlab.platypus import BaseDocTemplate, PageTemplate, Flowable, FrameBre
 from reportlab.platypus import Frame, PageTemplate, KeepInFrame
 from reportlab.lib.units import cm
 from reportlab.platypus import (Table, TableStyle, BaseDocTemplate)
-
+from xhtml2pdf import pisa
 
 st.set_page_config(page_title="Report Generator ", layout="wide")
 
@@ -69,18 +67,24 @@ def get_vector_store(text_chunks, api_key):
     vector_store.save_local("faiss_index")
 
 def get_conversational_chain():
-    prompt_template = """
-    While generating the response ensure that you format it as instructed. Break the line using the tag <BR/> and bold by inserting <b> </b> whenever required and write it in your response text.And provide the output with these tags.
-    Rules of formatting:
-    1. Breakline tag: <BR/> shall be used when you want to break the line and start on new line.
-    2. Bold text tag: If you want to bold some words write them inside these tags: <b> </b> 
-    You must always use the above tags in your response no matter what.
-    Here is the context: \n {context}?\n
-    Based on the context asnwer the question and remember to convert the answer to most easily understandable language. Add format tags breakline <BR/> and bold <b> </b>. Remember to bold all the main points it is must: \n{question}\n 
-    Answer:
+    prompt_template = """You are an intelligent AI assistant. Your works is to help write reports on\
+        a variety of topics. Write a detailed report as per user question and return the result formatted in HTML document.
+            Context for answer: {context}
+            Question from user: {question}
+
+        Your responses should be formatted in HTML document following the rules as listed below:
+                    
+        - <h2> tags For headers and <h4> tags for sub-headers
+        - <ul> tags for unordered listings and <ol> for ordered listings
+        - <b> tag for bolding of text
+        - </br> tag for breakline
+        - Follow all the other HTML syntax
+
+        Response should only be in HTML document format like mentioned above keep the font size 14 and just return the response with tags
     """
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3, google_api_key=api_key)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
+    
     print("Prompt ***** --->", prompt)
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
     return chain
@@ -97,40 +101,73 @@ def user_input(user_question, api_key):
                 para_ = response['output_text']
                 response = response['output_text']
                 fileName = '/workspaces/bidbooster_chain/output/output.pdf'
-                context_user_question = "Suggest the 6 word title for the text. Do not use tags while framing this response: " + response
-                subTitle = chain({"input_documents": docs,"question": context_user_question}, return_only_outputs=True)
-                subTitle = subTitle['output_text']
-                subTitle = subTitle.replace("*","")
-                subTitle = subTitle.replace("<b>","")
-                subTitle = subTitle.replace("</b>","")
-                para_ = para_.replace("*","")
+                # context_user_question = "Suggest the 6 word title for the text. Do not use tags while framing this response: " + response
+                # subTitle = chain({"input_documents": docs,"question": context_user_question}, return_only_outputs=True)
+                # subTitle = subTitle['output_text']
+                # subTitle = subTitle.replace("*","")
+                # subTitle = subTitle.replace("<b>","")
+                # subTitle = subTitle.replace("</b>","")
+                # para_ = para_.replace("*","")
+                # para_ = para_.replace("<BR>","<BR/>")
                 print("para_ printed here-------------------->>>",para_)
-                # creating a pdf object 
-              #  flow_obj = []
                 
-                pdf = BaseDocTemplate("/workspaces/bidbooster_chain/output/output.pdf", title = "Reported by ReportWHiz", pagesize=letter)
-                text_frame =  Frame(50,50,500,650, leftPadding= 30, rightPadding= 30,showBoundary=1)
-                frame = Frame(50,700,500,30, bottomPadding= 0,showBoundary = 0)
-                imageframe = Frame(20,710,110,40, bottomPadding= 0,showBoundary = 0)
-                
-                parts=[]
-                M = Paragraph('''<img src="/workspaces/bidbooster_chain/accenture_logo.jpg" width="50" height="50"/>''')
-                parts.append(M)             
-                
-                subTitle = "<strong> <font size = 20>" + subTitle + "</font> </strong><br/>"
-                K = Paragraph(subTitle)
-                parts.append(K)
+                match = re.search(r'<h2>(.*?)</h2>', para_)
+                para_title = match.group(1)
 
-                L = Paragraph(para_)
-                parts.append(L)
+                pdf_path = fileName
+                html_string ='''
+                            <!DOCTYPE html>
+                                <html lang="en">
+                                <head>
+                                    <meta charset="UTF-8" />
+                                    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                                    <title>Document</title>
+                                    <style>
+                                    .header {
+                                        background-color: #A020F0;
+                                        color: #ffffff; /* White text */
+                                        padding: 0 px;
+                                        text-align: center;
+                                        line-height: 1.5; 
+                                        padding-top: 20 px;
+                                        font-size: 22 px;
+                                    }
+                                    .subtitle {
+                                        background-color: #D14BA1;
+                                        color: #ffffff; 
+                                        padding: 0 px;
+                                        text-align: center;
+                                        padding-top: 15 px;
+                                        line-height: 1.5; 
+                                        font-size: 18 px;
+                                    }
+                                    .content {
+                                        padding: 0 px;
+                                        line-height: 1.5; 
+                                    }
+                                    </style>
+                                </head>
+                                <body>
+                                    <logo class="logo">
+                                    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Accenture.svg/2560px-Accenture.svg.png' width="80" height="30" />
+                                    </logo>               
+                                    <div class="header">
+                                    <h1>ReportWhiz: A Report Generation Tool!</h1>
+                                    </div>
+                                    <div class="subtitle">
+                                    <h3>''' + para_title + '''</h3>
+                                    </div>
 
-                frontpage = PageTemplate(id='FrontPage',
-                             frames=[imageframe, frame, text_frame]
-                             )
-
-                pdf.addPageTemplates(frontpage)
-                pdf.build(parts)
+                                    <!-- content section -->
+                                    <div class="content"> ''' + para_ + '''</div>
+                                </body>
+                                </html>
+                            '''
                 
+               # html_string = para_
+                with open(pdf_path, "wb") as pdf_file:
+                    pisa_status = pisa.CreatePDF(html_string, dest=pdf_file)
+
                 st.write("Report Generated Successfully. Please check directory ", fileName)
                 st.success("Report Delivered to the location !!!")
 

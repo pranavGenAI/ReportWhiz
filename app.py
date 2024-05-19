@@ -24,8 +24,8 @@ from bs4 import BeautifulSoup
 st.set_page_config(page_title="Report Generator ", layout="wide")
 from pathlib import Path
 
-filename = Path(__file__).parents[1] / 'output.pdf'
-fname = Path(__file__).parents[1] / 'output.pdf'
+filename = Path(__file__).parents[0] / 'output.pdf'
+fname = Path(__file__).parents[0] / 'output.pdf'
 
 st.markdown("""
     <style>

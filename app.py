@@ -120,7 +120,8 @@ def user_input(user_question, api_key):
                 print("Response is....",response)
                 para_ = response['output_text']
                 response = response['output_text']
-                fileName = 'output/output.pdf'
+                fileName = 'https://raw.githubusercontent.com/pranavGenAI/ReportWhiz/Output/Output.pdf'
+                #fileName = 'output/output.pdf'
                 # context_user_question = "Suggest the 6 word title for the text. Do not use tags while framing this response: " + response
                 # subTitle = chain({"input_documents": docs,"question": context_user_question}, return_only_outputs=True)
                 # subTitle = subTitle['output_text']
@@ -207,7 +208,7 @@ def user_input(user_question, api_key):
                         st.rerun()
                 edit_report()
 
-fname = "output/output.pdf"
+fileName = 'https://raw.githubusercontent.com/pranavGenAI/ReportWhiz/Output/Output.pdf'
 with open(fname, "rb") as f:
     st.download_button("Download Report from here!!", f, fname)
     st.success("Report Delivered to the location !!!")
@@ -276,7 +277,7 @@ def main():
 
 
 if __name__ == "__main__":
-    with open('/workspaces/bidbooster_chain/waves.css') as f:
+    with open('waves.css') as f:
         css = f.read()
     st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
     main()

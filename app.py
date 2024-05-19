@@ -120,7 +120,7 @@ def user_input(user_question, api_key):
                 print("Response is....",response)
                 para_ = response['output_text']
                 response = response['output_text']
-                fileName = 'https://raw.githubusercontent.com/pranavGenAI/ReportWhiz/Output/output.pdf'
+                fileName = 'https://raw.githubusercontent.com/pranavGenAI/ReportWhiz/output/output.pdf'
                 #fileName = 'output/output.pdf'
                 # context_user_question = "Suggest the 6 word title for the text. Do not use tags while framing this response: " + response
                 # subTitle = chain({"input_documents": docs,"question": context_user_question}, return_only_outputs=True)
@@ -208,7 +208,7 @@ def user_input(user_question, api_key):
                         st.rerun()
                 edit_report()
 
-fname = 'https://raw.githubusercontent.com/pranavGenAI/ReportWhiz/Output/output.pdf'
+fname = 'https://raw.githubusercontent.com/pranavGenAI/ReportWhiz/output/output.pdf'
 with open(fname, "rb") as f:
     st.download_button("Download Report from here!!", f, fname)
     st.success("Report Delivered to the location !!!")

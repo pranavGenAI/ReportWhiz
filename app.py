@@ -24,22 +24,41 @@ from bs4 import BeautifulSoup
 st.set_page_config(page_title="Report Generator ", layout="wide")
 
 st.markdown("""
-## ReportWiz 📋💬: Report Generation Tool!.
+    <style>
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
 
-### How It Works?
+        .animated-gradient-text {
+            font-family: "Graphik Semibold";
+            font-size: 42px;
+            background: linear-gradient(45deg, rgb(245, 58, 126) 30%, rgb(200, 1, 200) 55%, rgb(197, 45, 243) 20%);
+            background-size: 300% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientAnimation 10s ease-in-out infinite;
+        }
+    </style>
+    <p class="animated-gradient-text">
+        ReportWhiz: A report generation tool!
+    </p>
+""", unsafe_allow_html=True)
 
-Follow these simple steps to interact with the chatbot:
-1. **Upload the document and click on submit & process** (Please note: the base LLM model is fine-tuned on LCBO ESG RFP documents. Results may vary for other documents).
-2. **Ask a Question:** Once the document is processed, provide the requirements to generate report
-3. Ensure your **prompt is clear and complete** with some context for better result.
-""")
 #st.image("https://media1.tenor.com/m/6o864GYN6wUAAAAC/interruption-sorry.gif", width=1000)
 st.image("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjl2dGNiYThobHplMG81aGNqMjdsbWwwYWJmbTBncGp6dHFtZTFzMSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/CGP9713UVzQ0BQPhSf/giphy.gif", width=50)
 
 
 # This is the first API key input; no need to repeat it in the main function.
-#api_key = st.secrets['GEMINI_API_KEY']
-api_key = 'AIzaSyAJT6_IYPjUtUyT14uzZ8BSON7rDul7Ab8'
+api_key = st.secrets['GEMINI_API_KEY']
+#api_key = 'AIzaSyAJT6_IYPjUtUyT14uzZ8BSON7rDul7Ab8'
 
 if 'responses' not in st.session_state:
     st.session_state['responses'] = ["How can I assist you?"]

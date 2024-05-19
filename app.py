@@ -22,6 +22,10 @@ from xhtml2pdf import pisa
 from bs4 import BeautifulSoup
 
 st.set_page_config(page_title="Report Generator ", layout="wide")
+from pathlib import Path
+
+filename = Path(__file__).parents[1] / 'output.pdf'
+fname = Path(__file__).parents[1] / 'output.pdf'
 
 st.markdown("""
     <style>
@@ -120,7 +124,7 @@ def user_input(user_question, api_key):
                 print("Response is....",response)
                 para_ = response['output_text']
                 response = response['output_text']
-                fileName = 'https://github.com/pranavGenAI/ReportWhiz/tree/e165a5c380f32beda1bdd2582ca2070447fc800a/output/output.pdf'
+                #fileName = 'https://github.com/pranavGenAI/ReportWhiz/tree/e165a5c380f32beda1bdd2582ca2070447fc800a/output/output.pdf'
                 #fileName = 'output/output.pdf'
                 # context_user_question = "Suggest the 6 word title for the text. Do not use tags while framing this response: " + response
                 # subTitle = chain({"input_documents": docs,"question": context_user_question}, return_only_outputs=True)
@@ -208,7 +212,7 @@ def user_input(user_question, api_key):
                         st.rerun()
                 edit_report()
 
-fname = 'https://github.com/pranavGenAI/ReportWhiz/tree/e165a5c380f32beda1bdd2582ca2070447fc800a/output/output.pdf'
+#fname = 'https://github.com/pranavGenAI/ReportWhiz/tree/e165a5c380f32beda1bdd2582ca2070447fc800a/output/output.pdf'
 with open(fname, "rb") as f:
     st.download_button("Download Report from here!!", f, fname)
     st.success("Report Delivered to the location !!!")

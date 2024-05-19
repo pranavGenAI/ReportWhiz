@@ -53,7 +53,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 #st.image("https://media1.tenor.com/m/6o864GYN6wUAAAAC/interruption-sorry.gif", width=1000)
-st.image("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjl2dGNiYThobHplMG81aGNqMjdsbWwwYWJmbTBncGp6dHFtZTFzMSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/CGP9713UVzQ0BQPhSf/giphy.gif", width=50)
+#st.image("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjl2dGNiYThobHplMG81aGNqMjdsbWwwYWJmbTBncGp6dHFtZTFzMSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/CGP9713UVzQ0BQPhSf/giphy.gif", width=50)
 
 
 # This is the first API key input; no need to repeat it in the main function.
@@ -120,7 +120,7 @@ def user_input(user_question, api_key):
                 print("Response is....",response)
                 para_ = response['output_text']
                 response = response['output_text']
-                fileName = '/workspaces/bidbooster_chain/output/output.pdf'
+                fileName = 'output/output.pdf'
                 # context_user_question = "Suggest the 6 word title for the text. Do not use tags while framing this response: " + response
                 # subTitle = chain({"input_documents": docs,"question": context_user_question}, return_only_outputs=True)
                 # subTitle = subTitle['output_text']
@@ -207,7 +207,7 @@ def user_input(user_question, api_key):
                         st.rerun()
                 edit_report()
 
-fname = "/workspaces/bidbooster_chain/output/output.pdf"
+fname = "output/output.pdf"
 with open(fname, "rb") as f:
     st.download_button("Download Report from here!!", f, fname)
     st.success("Report Delivered to the location !!!")
@@ -260,6 +260,10 @@ def main():
                 user_input(user_question, api_key)
    
     with st.sidebar:
+        st.image("https://www.vgen.it/wp-content/uploads/2021/04/logo-accenture-ludo.png", width=150)
+        st.markdown("")
+        st.markdown("")
+        
         st.title("ReportWiz 📋💬")
         pdf_docs = st.file_uploader("Upload your Files and Click on the Submit & Process Button", accept_multiple_files=True, key="pdf_uploader")
         if st.button("Submit & Process", key="process_button") and api_key:  # Check if API key is provided before processing
@@ -268,7 +272,7 @@ def main():
                 text_chunks = get_text_chunks(raw_text)
                 get_vector_store(text_chunks, api_key)
                 st.success("Done")
-        st.image("https://media.tenor.com/s1Y9XfdN08EAAAAi/bot.gif", width=200)
+        #st.image("https://media.tenor.com/s1Y9XfdN08EAAAAi/bot.gif", width=200)
 
 
 if __name__ == "__main__":

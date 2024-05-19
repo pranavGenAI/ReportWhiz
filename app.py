@@ -208,7 +208,7 @@ def user_input(user_question, api_key):
                         st.rerun()
                 edit_report()
 
-fileName = 'https://raw.githubusercontent.com/pranavGenAI/ReportWhiz/Output/Output.pdf'
+fname = 'https://raw.githubusercontent.com/pranavGenAI/ReportWhiz/Output/Output.pdf'
 with open(fname, "rb") as f:
     st.download_button("Download Report from here!!", f, fname)
     st.success("Report Delivered to the location !!!")

@@ -216,6 +216,26 @@ def main():
 
     user_question = st.text_input("What report do you want to generate?", key="user_question")
     if user_question:
+        m = st.markdown("""
+        <style>
+        div.stButton > button:first-child {
+            background:linear-gradient(45deg, #c9024b 45%, #ba0158 55%, #cd006d 70%);
+            
+            color: white;
+
+        }
+
+        div.stButton > button:hover {
+            background:linear-gradient(45deg, #ce026f 45%, #970e79 55%, #6c028d 70%);
+            background-color:#ce1126;
+        }
+
+        div.stButton > button:active {
+            position:relative;
+            top:3px;
+        }
+
+        </style>""", unsafe_allow_html=True)
         if st.button("Generate Report"):
             if user_question and api_key:  # Ensure API key and user question are provided
                 user_input(user_question, api_key)
@@ -233,4 +253,7 @@ def main():
 
 
 if __name__ == "__main__":
+    with open('/workspaces/bidbooster_chain/waves.css') as f:
+        css = f.read()
+    st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
     main()

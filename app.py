@@ -53,8 +53,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # This is the first API key input; no need to repeat it in the main function.
-#api_key = st.secrets['GEMINI_API_KEY']
-api_key = 'AIzaSyAJT6_IYPjUtUyT14uzZ8BSON7rDul7Ab8'
+api_key = st.secrets['GEMINI_API_KEY']
+#api_key = 'AIzaSyAJT6_IYPjUtUyT14uzZ8BSON7rDul7Ab8'
 
 if 'responses' not in st.session_state:
     st.session_state['responses'] = ["How can I assist you?"]

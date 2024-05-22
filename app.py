@@ -203,6 +203,8 @@ def user_input(user_question, api_key):
                         st.success("Report Delivered to the location !!!")
                         st.rerun()
                 edit_report()
+                st.success("Report Delivered to the location !!!")
+                        
 
 fname = "output.pdf"
 with open(fname, "rb") as f:

@@ -22,10 +22,6 @@ from xhtml2pdf import pisa
 from bs4 import BeautifulSoup
 
 st.set_page_config(page_title="Report Generator ", layout="wide")
-from pathlib import Path
-
-filename = Path(__file__).parents[0] / 'output.pdf'
-fname = Path(__file__).parents[0] / 'output.pdf'
 
 st.markdown("""
     <style>
@@ -44,25 +40,21 @@ st.markdown("""
         .animated-gradient-text {
             font-family: "Graphik Semibold";
             font-size: 42px;
-            background: linear-gradient(45deg, rgb(245, 58, 126) 30%, rgb(200, 1, 200) 55%, rgb(197, 45, 243) 20%);
+            background: linear-gradient(45deg, #22ebe8 30%, #dc14b7 55%, #fe647b 20%);
             background-size: 300% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: gradientAnimation 10s ease-in-out infinite;
+            animation: gradientAnimation 20s ease-in-out infinite;
         }
     </style>
     <p class="animated-gradient-text">
-        ReportWhiz: A report generation tool!
+        ReportWhiz: A Report Generation Tool!
     </p>
 """, unsafe_allow_html=True)
 
-#st.image("https://media1.tenor.com/m/6o864GYN6wUAAAAC/interruption-sorry.gif", width=1000)
-#st.image("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjl2dGNiYThobHplMG81aGNqMjdsbWwwYWJmbTBncGp6dHFtZTFzMSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/CGP9713UVzQ0BQPhSf/giphy.gif", width=50)
-
-
 # This is the first API key input; no need to repeat it in the main function.
-api_key = st.secrets['GEMINI_API_KEY']
-#api_key = 'AIzaSyAJT6_IYPjUtUyT14uzZ8BSON7rDul7Ab8'
+#api_key = st.secrets['GEMINI_API_KEY']
+api_key = 'AIzaSyAJT6_IYPjUtUyT14uzZ8BSON7rDul7Ab8'
 
 if 'responses' not in st.session_state:
     st.session_state['responses'] = ["How can I assist you?"]
@@ -124,8 +116,7 @@ def user_input(user_question, api_key):
                 print("Response is....",response)
                 para_ = response['output_text']
                 response = response['output_text']
-                #fileName = 'https://github.com/pranavGenAI/ReportWhiz/tree/e165a5c380f32beda1bdd2582ca2070447fc800a/output/output.pdf'
-                #fileName = 'output/output.pdf'
+                fileName = 'output.pdf'
                 # context_user_question = "Suggest the 6 word title for the text. Do not use tags while framing this response: " + response
                 # subTitle = chain({"input_documents": docs,"question": context_user_question}, return_only_outputs=True)
                 # subTitle = subTitle['output_text']
@@ -209,13 +200,14 @@ def user_input(user_question, api_key):
                             pisa_status = pisa.CreatePDF(output_, dest=pdf_file)
                         print("done with report")
                         st.write("Report Generated Successfully. Please check directory ", fileName)
+                        st.success("Report Delivered to the location !!!")
                         st.rerun()
                 edit_report()
 
-#fname = 'https://github.com/pranavGenAI/ReportWhiz/tree/e165a5c380f32beda1bdd2582ca2070447fc800a/output/output.pdf'
+fname = "output.pdf"
 with open(fname, "rb") as f:
     st.download_button("Download Report from here!!", f, fname)
-    st.success("Report Delivered to the location !!!")
+    
                         
 
 def get_conversation_string():
@@ -265,11 +257,10 @@ def main():
                 user_input(user_question, api_key)
    
     with st.sidebar:
-        st.image("https://www.vgen.it/wp-content/uploads/2021/04/logo-accenture-ludo.png", width=150)
+        st.image("https://www.vgen.it/wp-content/uploads/2021/04/logo-accenture-ludo.png", width=120)
         st.markdown("")
         st.markdown("")
-        
-        st.title("ReportWiz 📋💬")
+        st.title("ReportWiz")
         pdf_docs = st.file_uploader("Upload your Files and Click on the Submit & Process Button", accept_multiple_files=True, key="pdf_uploader")
         if st.button("Submit & Process", key="process_button") and api_key:  # Check if API key is provided before processing
             with st.spinner("Reading & Processing Content..."):
@@ -277,11 +268,40 @@ def main():
                 text_chunks = get_text_chunks(raw_text)
                 get_vector_store(text_chunks, api_key)
                 st.success("Done")
-        #st.image("https://media.tenor.com/s1Y9XfdN08EAAAAi/bot.gif", width=200)
-
+        
 
 if __name__ == "__main__":
-    with open('waves.css') as f:
-        css = f.read()
-    st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
+    st.markdown('''<style>
+        .stApp > header {
+        background-color: transparent;
+    }
+    .stApp {
+        background: linear-gradient(45deg, #0a1621 20%, #0E1117 45%, #0E1117 55%, #3a5683 90%);
+        animation: my_animation 20s ease infinite;
+        background-size: 200% 200%;
+        background-attachment: fixed;
+    }
+    @keyframes my_animation {
+        0% {background-position: 0% 0%;}
+        50% {background-position: 100% 100%;}
+        100% {background-position: 0% 0%;}
+    }
+    [data-testid=stSidebar] {
+        background: linear-gradient(360deg, #1a2631 95%, #161d29 10%);
+    }
+    div.stButton > button:first-child {
+        background:linear-gradient(45deg, #c9024b 45%, #ba0158 55%, #cd006d 70%);
+        color: white;
+        border: none;
+    }
+    div.stButton > button:hover {
+        background:linear-gradient(45deg, #ce026f 45%, #970e79 55%, #6c028d 70%);
+        background-color:#ce1126;
+    }
+    div.stButton > button:active {
+        position:relative;
+        top:3px;
+    }    
+
+    </style>''', unsafe_allow_html=True)
     main()

@@ -24,35 +24,6 @@ from bs4 import BeautifulSoup
 
 st.set_page_config(page_title="Report Generator ", layout="wide")
 
-st.markdown("""
-    <style>
-        @keyframes gradientAnimation {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        }
-
-        .animated-gradient-text {
-            font-family: "Graphik Semibold";
-            font-size: 42px;
-            background: linear-gradient(45deg, #22ebe8 30%, #dc14b7 55%, #fe647b 20%);
-            background-size: 300% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradientAnimation 20s ease-in-out infinite;
-        }
-    </style>
-    <p class="animated-gradient-text">
-        ReportWhiz: A Report Generation Tool!
-    </p>
-""", unsafe_allow_html=True)
-
 background_html = """
 <!DOCTYPE html>
 <html lang="en">
@@ -91,7 +62,7 @@ background_html = """
                 bubbles.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
-                    radius: Math.random() * 10 + 2, // Adjusted smaller bubble size
+                    radius: Math.random() * 5 + 2, // Adjusted smaller bubble size
                     speedX: Math.random() * 0.5 - 0.25, // Adjusted slower speed
                     speedY: Math.random() * 0.5 - 0.25, // Adjusted slower speed
                     glow: false,
@@ -206,6 +177,37 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
+st.markdown("""
+    <style>
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .animated-gradient-text {
+            font-family: "Graphik Semibold";
+            font-size: 42px;
+            background: linear-gradient(45deg, #22ebe8 30%, #dc14b7 55%, #fe647b 20%);
+            background-size: 300% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientAnimation 20s ease-in-out infinite;
+        }
+    </style>
+    <p class="animated-gradient-text">
+        ReportWhiz: A Report Generation Tool!
+    </p>
+""", unsafe_allow_html=True)
+
+
 
 
 # This is the first API key input; no need to repeat it in the main function.

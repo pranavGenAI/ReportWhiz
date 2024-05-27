@@ -63,8 +63,8 @@ background_html = """
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
                     radius: Math.random() * 5 + 2, // Adjusted smaller bubble size
-                    speedX: Math.random() * 0.15 - 0.25, // Adjusted slower speed
-                    speedY: Math.random() * 0.15 - 0.25, // Adjusted slower speed
+                    speedX: Math.random() * 0.05 - 0.25, // Adjusted slower speed
+                    speedY: Math.random() * 0.05 - 0.25, // Adjusted slower speed
                     glow: false,
                     glowStart: 0
                 });

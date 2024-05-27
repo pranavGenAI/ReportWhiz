@@ -53,7 +53,7 @@ background_html = """
 
         // Arrays to store bubbles
         let bubbles = [];
-        const numBubbles = 200;
+        const numBubbles = 100;
         const glowDuration = 1000; // Glow duration in milliseconds
 
         // Function to initialize bubbles
@@ -63,8 +63,8 @@ background_html = """
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height,
                     radius: Math.random() * 5 + 2, // Adjusted smaller bubble size
-                    speedX: Math.random() * 0.05 - 0.25, // Adjusted slower speed
-                    speedY: Math.random() * 0.05 - 0.25, // Adjusted slower speed
+                    speedX: Math.random() * 0.5 - 0.25, // Adjusted slower speed
+                    speedY: Math.random() * 0.5 - 0.25, // Adjusted slower speed
                     glow: false,
                     glowStart: 0
                 });

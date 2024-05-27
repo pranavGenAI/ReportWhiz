@@ -53,7 +53,7 @@ background_html = """
 
         // Arrays to store bubbles
         let bubbles = [];
-        const numBubbles = 150;
+        const numBubbles = 200;
         const glowDuration = 1000; // Glow duration in milliseconds
 
         // Function to initialize bubbles

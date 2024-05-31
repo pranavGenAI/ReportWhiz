@@ -264,7 +264,7 @@ def get_conversational_chain():
     return chain
 
 def user_input(user_question, api_key):
-    with st.spinner("Writing Bid ..."):
+    with st.spinner("Writing Bid Document..."):
                 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=api_key)
                 #new_db = FAISS.load_local("faiss_index", embeddings)
                 new_db = FAISS.load_local("faiss_index", embeddings,allow_dangerous_deserialization=True)

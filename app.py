@@ -22,7 +22,7 @@ from reportlab.platypus import (Table, TableStyle, BaseDocTemplate)
 from xhtml2pdf import pisa
 from bs4 import BeautifulSoup
 
-st.set_page_config(page_title="Report Generator ", layout="wide")
+st.set_page_config(page_title="Bid Generator ", layout="wide")
 
 background_html = """
 <!DOCTYPE html>
@@ -203,7 +203,7 @@ st.markdown("""
         }
     </style>
     <p class="animated-gradient-text">
-        ReportWhiz: A Report Generation Tool!
+        Bid Creation Bot : Generates Bid Document!
     </p>
 """, unsafe_allow_html=True)
 
@@ -241,8 +241,8 @@ def get_vector_store(text_chunks, api_key):
     vector_store.save_local("faiss_index")
 
 def get_conversational_chain():
-    prompt_template = """You are an intelligent AI assistant. Your works is to help write reports on\
-        a variety of topics. Write a detailed report as per user question and return the result formatted in HTML document.
+    prompt_template = """You are an intelligent AI assistant. Your works is to help write RFP document on\
+        a given topics. Write a detailed RFP as per user question and return the result formatted in HTML document. RFP should contain all the sections which a typical RFP has.
             Context for answer: {context}
             Question from user: {question}
 
@@ -264,7 +264,7 @@ def get_conversational_chain():
     return chain
 
 def user_input(user_question, api_key):
-    with st.spinner("Writing Report ..."):
+    with st.spinner("Writing RFP ..."):
                 embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=api_key)
                 #new_db = FAISS.load_local("faiss_index", embeddings)
                 new_db = FAISS.load_local("faiss_index", embeddings,allow_dangerous_deserialization=True)
@@ -333,7 +333,7 @@ def user_input(user_question, api_key):
                                     <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Accenture.svg/2560px-Accenture.svg.png' width="80" height="30" />
                                     </logo>               
                                     <div class="header">
-                                    <h1>ReportWhiz: A Report Generation Tool!</h1>
+                                    <h1>Bid Creation Bot!</h1>
                                     </div>
                                     <div class="subtitle">
                                     <h3>''' + para_title + '''</h3>
@@ -345,9 +345,9 @@ def user_input(user_question, api_key):
                                 </html>
                             '''
                 
-                @st.experimental_dialog("Edit the report", width= 'large')
+                @st.experimental_dialog("Edit the RFP", width= 'large')
                 def edit_report():
-                    output_ = st.text_area("Edit your report", html_string)
+                    output_ = st.text_area("Edit your RFP", html_string)
                     if st.button("Submit"):
                         print("Inside submit button")
                         st.session_state.vote = output_
@@ -356,17 +356,17 @@ def user_input(user_question, api_key):
                             print("PDF opened")
                         
                             pisa_status = pisa.CreatePDF(output_, dest=pdf_file)
-                        print("done with report")
-                        st.write("Report Generated Successfully. Please check directory ", fileName)
-                        st.success("Report Delivered to the location !!!")
+                        print("done with RFP")
+                        st.write("RFP Generated Successfully. Please check directory ", fileName)
+                        st.success("RFP Delivered to the location !!!")
                         st.rerun()
                 edit_report()
-                st.success("Report Delivered to the location !!!")
+                st.success("RFP Delivered to the location !!!")
                         
 
 fname = "output.pdf"
 with open(fname, "rb") as f:
-    st.download_button("Download Report from here!!", f, fname)
+    st.download_button("Download RFP from here!!", f, fname)
     
                         
 
@@ -388,9 +388,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def main():
-    st.header("ReportWiz Tool")
+    st.header("Bid Creation Bot")
 
-    user_question = st.text_input("What report do you want to generate?", key="user_question")
+    user_question = st.text_input("What RFP do you want to generate?", key="user_question")
     if user_question:
         m = st.markdown("""
         <style>
@@ -412,7 +412,7 @@ def main():
         }
 
         </style>""", unsafe_allow_html=True)
-        if st.button("Generate Report"):
+        if st.button("Generate RFP"):
             if user_question and api_key:  # Ensure API key and user question are provided
                 user_input(user_question, api_key)
    
@@ -420,7 +420,7 @@ def main():
         st.image("https://www.vgen.it/wp-content/uploads/2021/04/logo-accenture-ludo.png", width=120)
         st.markdown("")
         st.markdown("")
-        st.title("ReportWiz")
+        st.title("Bid Creation Bot")
         pdf_docs = st.file_uploader("Upload your Files and Click on the Submit & Process Button", accept_multiple_files=True, key="pdf_uploader")
         if st.button("Submit & Process", key="process_button") and api_key:  # Check if API key is provided before processing
             with st.spinner("Reading & Processing Content..."):

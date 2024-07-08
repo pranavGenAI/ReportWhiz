@@ -270,7 +270,7 @@ def get_conversational_chain():
 
         Response should only be in HTML document format like mentioned above keep the font size 14 and just return the response with tags
     """
-    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3, google_api_key=api_key)
+    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=st.session_state.temperature, google_api_key=api_key)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     
     print("Prompt ***** --->", prompt)
@@ -450,7 +450,7 @@ def main():
                 "temperature",
                 min_value=0.1,
                 max_value=1.0,
-                value=0.7,
+                value=0.3,
                 step=0.1,
             )
             st.session_state.top_p = st.slider(

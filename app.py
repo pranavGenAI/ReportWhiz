@@ -264,7 +264,7 @@ def get_conversational_chain():
         Your responses should be formatted in HTML document following the rules as listed below:
                     
         - <h2> tags For headers and <h4> tags for sub-headers
-        - <ul> tags for unordered listings and <ol> for ordered listings
+        - you must use <ul> tags for unordered listings and <ol> for ordered listings
         - <b> tag for bolding of text
         - </br> tag for breakline
         - Follow all the other HTML syntax

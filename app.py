@@ -243,7 +243,7 @@ def get_vector_store(text_chunks, api_key):
     vector_store.save_local("faiss_index")
 
 def get_conversational_chain():
-    prompt_template = """You are an intelligent Bid assistant. Your works is to help write RFP document on a given topics. Write a detailed RFP as per user question and return the result formatted in HTML document. RFP should contain all the sections which a typical RFP has.
+    prompt_template = """You are an intelligent Bid assistant. Your works is to help write RFP document on a given topics. Write a detailed RFP as per user question and return the result formatted in HTML document. RFP should be as detailed as possible and should contain all the sections which a typical RFP has.
             Context for answer: {context}
             Question from user: {question}
 
@@ -269,7 +269,7 @@ def get_conversational_chain():
         - </br> tag for breakline
         - Follow all the other HTML syntax
 
-        Response should only be in HTML document format like mentioned above keep the font size 14, you must use <ul> or <ol> tag wherver required and just return the response with tags
+        Response should only be in HTML document format like mentioned above keep the font size 14, you must use <ul> or <ol> tag wherver required without adding style tag for these two and just return the response with tags
         Use divider to seperate each section. Do not use styling for <ul> and <ol>
     """
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=st.session_state.temperature, google_api_key=api_key)

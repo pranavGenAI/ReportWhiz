@@ -243,24 +243,23 @@ def get_vector_store(text_chunks, api_key):
     vector_store.save_local("faiss_index")
 
 def get_conversational_chain():
-    prompt_template = """You are an intelligent AI assistant. Your works is to help write RFP document on\
-        a given topics. Write a detailed RFP as per user question and return the result formatted in HTML document. RFP should contain all the sections which a typical RFP has.
+    prompt_template = """You are an intelligent Bid assistant. Your works is to help write RFP document on a given topics. Write a detailed RFP as per user question and return the result formatted in HTML document. RFP should contain all the sections which a typical RFP has.
             Context for answer: {context}
             Question from user: {question}
 
         Include sections like:
-        Introduction
-        Purpose
-        Scope of Work
-        Proposal Guidelines
-        Timeline
-        Qualifications / Evaluation Criteria
-        Proposal Submission Requirements
-        Budget / Cost Proposal
-        Terms and Conditions
-        Contract Terms
-        Contact Information
-        Appendices / Attachments
+        1. Introduction
+        2. Purpose
+        3. Scope of Work
+        4. Proposal Guidelines
+        5. Timeline
+        6. Qualifications / Evaluation Criteria
+        7. Proposal Submission Requirements
+        8. Budget / Cost Proposal
+        9. Terms and Conditions
+        10. Contract Terms
+        11. Contact Information
+        12. Appendices / Attachments
         
         Your responses should be formatted in HTML document following the rules as listed below:
                     
@@ -270,7 +269,7 @@ def get_conversational_chain():
         - </br> tag for breakline
         - Follow all the other HTML syntax
 
-        Response should only be in HTML document format like mentioned above keep the font size 14 and just return the response with tags
+        Response should only be in HTML document format like mentioned above keep the font size 14, use bullets using <ul> tag wherver required and just return the response with tags
     """
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=st.session_state.temperature, google_api_key=api_key)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])

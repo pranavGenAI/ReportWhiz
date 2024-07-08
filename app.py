@@ -291,7 +291,7 @@ def user_input(user_question, api_key):
                 para_ = response['output_text']
                 response = response['output_text']
                 fileName = 'output.pdf'
-                print("para_ printed here-------------------->>>",para_)
+                #print("para_ printed here-------------------->>>",para_)
                 soup = BeautifulSoup(para_, 'html.parser')
                 # Extract the title
                 para_title = soup.title.string

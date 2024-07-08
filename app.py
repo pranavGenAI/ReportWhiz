@@ -270,7 +270,7 @@ def get_conversational_chain():
         - Follow all the other HTML syntax
 
         Response should only be in HTML document format like mentioned above keep the font size 14, you must use <ul> or <ol> tag wherver required without adding style tag for these two and just return the response with tags
-        Use divider to seperate each section. Do not define styling for <ul> and <ol>. Do not use: ul, ol {list-style-type: none;}
+        Use divider to seperate each section. Do not define styling for <ul> and <ol>. Do not use: ul, ol - list-style-type: none;
     """
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=st.session_state.temperature, google_api_key=api_key)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])

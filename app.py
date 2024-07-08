@@ -246,6 +246,20 @@ def get_conversational_chain():
             Context for answer: {context}
             Question from user: {question}
 
+        Include sections like:
+        Introduction
+        Purpose / Background
+        Scope of Work / Services Required
+        Proposal Guidelines / Instructions
+        Timeline / Schedule of Events
+        Qualifications / Evaluation Criteria
+        Proposal Submission Requirements
+        Budget / Cost Proposal
+        Terms and Conditions
+        Contract Terms
+        Contact Information
+        Appendices / Attachments
+        
         Your responses should be formatted in HTML document following the rules as listed below:
                     
         - <h2> tags For headers and <h4> tags for sub-headers
@@ -428,6 +442,25 @@ def main():
                 text_chunks = get_text_chunks(raw_text)
                 get_vector_store(text_chunks, api_key)
                 st.success("Done")
+
+        with st.expander("**Models and parameters**"):
+
+            # model parameters
+            st.session_state.temperature = st.slider(
+                "temperature",
+                min_value=0.1,
+                max_value=1.0,
+                value=0.7,
+                step=0.1,
+            )
+            st.session_state.top_p = st.slider(
+                "top_p",
+                min_value=0.1,
+                max_value=1.0,
+                value=0.95,
+                step=0.05,
+            )
+
         
 
 if __name__ == "__main__":

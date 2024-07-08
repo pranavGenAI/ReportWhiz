@@ -269,7 +269,7 @@ def get_conversational_chain():
         - </br> tag for breakline
         - Follow all the other HTML syntax
 
-        Response should only be in HTML document format like mentioned above keep the font size 14, use bullets using <ul> tag wherver required and just return the response with tags
+        Response should only be in HTML document format like mentioned above keep the font size 14, you must use <ul> or <ol> tag wherver required and just return the response with tags
     """
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=st.session_state.temperature, google_api_key=api_key)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])

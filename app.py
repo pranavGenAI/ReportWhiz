@@ -360,7 +360,7 @@ def user_input(user_question, api_key):
                         print("done with RFP")
                         st.write("RFP Generated Successfully. Please check directory ", fileName)
                         st.success("RFP Delivered to the location !!!")
-                        #st.rerun()
+                        st.rerun()
                 edit_report()
                 st.success("RFP Delivered to the location !!!")
 
@@ -376,23 +376,9 @@ cv.close()
 with open(fname, "rb") as f:
     st.download_button("Download .pdf version of RFP!", f, fname)
 
-if st.button("Convert and Download DOCX"):
-    # Convert HTML to DOCX using html2docx
-    docx_buffer = io.BytesIO()
-    html2docx.convert(output_, docx_buffer)
-    docx_buffer.seek(0)  # Rewind the buffer
-                    
-    # Provide the download button
-    st.download_button(
-    label="Download DOCX",
-    data=docx_buffer,
-    file_name="output.docx",
-    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    )
-
-# with open(docx_path, "rb") as docx_file:
-#     docx_bytes = docx_file.read()
-#     st.download_button("Download .docx version of RFP!", data=docx_bytes, file_name="output.docx")
+with open(docx_path, "rb") as docx_file:
+    docx_bytes = docx_file.read()
+    st.download_button("Download .docx version of RFP!", data=docx_bytes, file_name="output.docx")
 
 
 

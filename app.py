@@ -21,6 +21,8 @@ from reportlab.lib.units import cm
 from reportlab.platypus import (Table, TableStyle, BaseDocTemplate)
 from xhtml2pdf import pisa
 from bs4 import BeautifulSoup
+from pdf2docx import Converter
+
 
 st.set_page_config(page_title="Bid Generator ", layout="wide")
 
@@ -211,8 +213,8 @@ st.markdown("""
 
 
 # This is the first API key input; no need to repeat it in the main function.
-api_key = st.secrets['GEMINI_API_KEY']
-#api_key = 'AIzaSyAJT6_IYPjUtUyT14uzZ8BSON7rDul7Ab8'
+#api_key = st.secrets['GEMINI_API_KEY']
+api_key = 'AIzaSyCiPGxwD04JwxifewrYiqzufyd25VjKBkw'
 
 if 'responses' not in st.session_state:
     st.session_state['responses'] = ["How can I assist you?"]
@@ -248,10 +250,10 @@ def get_conversational_chain():
 
         Include sections like:
         Introduction
-        Purpose / Background
-        Scope of Work / Services Required
-        Proposal Guidelines / Instructions
-        Timeline / Schedule of Events
+        Purpose
+        Scope of Work
+        Proposal Guidelines
+        Timeline
         Qualifications / Evaluation Criteria
         Proposal Submission Requirements
         Budget / Cost Proposal
@@ -288,28 +290,12 @@ def user_input(user_question, api_key):
                 print("Response is....",response)
                 para_ = response['output_text']
                 response = response['output_text']
-                fileName = 'output.pdf'
-                # context_user_question = "Suggest the 6 word title for the text. Do not use tags while framing this response: " + response
-                # subTitle = chain({"input_documents": docs,"question": context_user_question}, return_only_outputs=True)
-                # subTitle = subTitle['output_text']
-                # subTitle = subTitle.replace("*","")
-                # subTitle = subTitle.replace("<b>","")
-                # subTitle = subTitle.replace("</b>","")
-                # para_ = para_.replace("*","")
-                # para_ = para_.replace("<BR>","<BR/>")
+                fileName = 'C:/Users/pranav.baviskar/Desktop/Learning/GenAI/test/output.pdf'
                 print("para_ printed here-------------------->>>",para_)
                 soup = BeautifulSoup(para_, 'html.parser')
-
                 # Extract the title
                 para_title = soup.title.string
-
-                # match = re.search(r'<h2>(.*?)</h2>', para_)
-                # para_title = match.group(1)
-
                 pdf_path = fileName
-
-            
-
                 html_string ='''
                             <!DOCTYPE html>
                                 <html lang="en">
@@ -378,11 +364,20 @@ def user_input(user_question, api_key):
                 st.success("RFP Delivered to the location !!!")
                         
 
-fname = "output.pdf"
+fname = "C:/Users/pranav.baviskar/Desktop/Learning/GenAI/test/output.pdf"
+pdf_path = "C:/Users/pranav.baviskar/Desktop/Learning/GenAI/test/output.pdf"
+docx_path = "C:/Users/pranav.baviskar/Desktop/Learning/GenAI/test/output.docx"
+cv = Converter(pdf_path)
+cv.convert(docx_path)
+cv.close()
+
 with open(fname, "rb") as f:
-    st.download_button("Download RFP from here!!", f, fname)
+    st.download_button("Download .pdf version of RFP!", f, fname)
     
-                        
+with open(docx_path, "rb") as docx_file:
+    docx_bytes = docx_file.read()
+    st.download_button("Download .docx version of RFP!", data=docx_bytes, file_name="output.docx")
+
 
 def get_conversation_string():
     conversation_string = ""

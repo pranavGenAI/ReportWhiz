@@ -380,9 +380,6 @@ with open(docx_path, "rb") as docx_file:
     docx_bytes = docx_file.read()
     st.download_button("Download .docx version of RFP!", data=docx_bytes, file_name="output.docx")
 
-
-
-
 def get_conversation_string():
     conversation_string = ""
     for i in range(len(st.session_state['responses'])-1):

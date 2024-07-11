@@ -373,7 +373,7 @@ def user_input(user_question, api_key):
                     token_counts[st.session_state.username] = st.session_state.tokens_remaining
                     write_token_counts(token_counts)
 
-                    fileName = 'C:/Users/pranav.baviskar/Desktop/Learning/GenAI/test/output.pdf'
+                    fileName = 'output.pdf'
                     #print("para_ printed here-------------------->>>",para_)
                     soup = BeautifulSoup(para_, 'html.parser')
                     # Extract the title
@@ -471,9 +471,9 @@ st.markdown("""
 
 def main():
     st.header("Bid Creation Bot")
-    fname = 'C:/Users/pranav.baviskar/Desktop/Learning/GenAI/test/output.pdf'
-    pdf_path = 'C:/Users/pranav.baviskar/Desktop/Learning/GenAI/test/output.pdf'
-    docx_path = 'C:/Users/pranav.baviskar/Desktop/Learning/GenAI/test/output.docx'
+    fname = 'output.pdf'
+    pdf_path = 'output.pdf'
+    docx_path = 'output.docx'
     cv = Converter(pdf_path)
     cv.convert(docx_path)
     cv.close()

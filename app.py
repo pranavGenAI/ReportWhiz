@@ -286,12 +286,14 @@ def login():
                 st.error("Invalid username or password")
     # Add the footer section
     col4, col5, col6, col7, col8, col9 = st.columns([1, 1, 1, 1, 1, 1])
+    st.markdown("")
+    st.markdown("")
     with col4:
         st.write("**Design & Developed by:**")
     with col5:
-        st.image("https://lh3.googleusercontent.com/drive-viewer/AKGpiha2TPFebW5deI-uoKPuD2Yoq_4xws137dj4LaFW3APyb_BkQ5NNKtwtH__KDr3E-_KbygMPh3D5VPqZPR5-ymj17acBxJgBLA=s2560", width=250)
-    with col6:
-        st.image("https://lh3.googleusercontent.com/drive-viewer/AKGpihZfq-IzkSSrziXqoQ8r0ypLiLPAQPW245Aq-NP6-90LEExUcBRM0L_mrr30zFXUzzN985zDpKWrcmptsWMF98vGmZjnfeEibg=s2560", width=250)
+        st.image("https://lh3.googleusercontent.com/drive-viewer/AKGpiha2TPFebW5deI-uoKPuD2Yoq_4xws137dj4LaFW3APyb_BkQ5NNKtwtH__KDr3E-_KbygMPh3D5VPqZPR5-ymj17acBxJgBLA=s2560", width=150)
+    with col7:
+        st.image("https://lh3.googleusercontent.com/drive-viewer/AKGpihZfq-IzkSSrziXqoQ8r0ypLiLPAQPW245Aq-NP6-90LEExUcBRM0L_mrr30zFXUzzN985zDpKWrcmptsWMF98vGmZjnfeEibg=s2560", width=150)
 
 
 def logout():

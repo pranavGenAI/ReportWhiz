@@ -285,7 +285,7 @@ def login():
             else:
                 st.error("Invalid username or password")
     # Add the footer section
-    col3, col4, col5, col6 = st.columns([1, 1, 1, 1])
+    col4, col5, col6 = st.columns([1, 1, 1])
     with col3:
         st.write("**Design & Developed by:**")
     with col4:

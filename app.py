@@ -284,6 +284,14 @@ def login():
                     st.error("No tokens remaining. Please contact support.")
             else:
                 st.error("Invalid username or password")
+    # Add the footer section
+    col3, col4, col5, col6 = st.columns([1, 1, 1, 1])
+    with col3:
+        st.write("**Design & Developed by:**")
+    with col4:
+        st.image("https://lh3.googleusercontent.com/drive-viewer/AKGpiha2TPFebW5deI-uoKPuD2Yoq_4xws137dj4LaFW3APyb_BkQ5NNKtwtH__KDr3E-_KbygMPh3D5VPqZPR5-ymj17acBxJgBLA=s2560", use_column_width=True)
+    with col5:
+        st.image("https://lh3.googleusercontent.com/drive-viewer/AKGpihZfq-IzkSSrziXqoQ8r0ypLiLPAQPW245Aq-NP6-90LEExUcBRM0L_mrr30zFXUzzN985zDpKWrcmptsWMF98vGmZjnfeEibg=s2560", use_column_width=True)
 
 
 def logout():

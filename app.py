@@ -22,7 +22,8 @@ from reportlab.platypus import (Table, TableStyle, BaseDocTemplate)
 from xhtml2pdf import pisa
 from bs4 import BeautifulSoup
 from pdf2docx import Converter
-import html2docx
+import hashlib
+import json
 import io
 
 st.set_page_config(page_title="Bid Generator ", layout="wide")
@@ -214,14 +215,85 @@ st.markdown("""
 
 
 # This is the first API key input; no need to repeat it in the main function.
-api_key = st.secrets['GEMINI_API_KEY']
-#api_key = 'AIzaSyCiPGxwD04JwxifewrYiqzufyd25VjKBkw'
+#api_key = st.secrets['GEMINI_API_KEY']
+api_key = 'AIzaSyCiPGxwD04JwxifewrYiqzufyd25VjKBkw'
 
 if 'responses' not in st.session_state:
     st.session_state['responses'] = ["How can I assist you?"]
 
 if 'requests' not in st.session_state:
     st.session_state['requests'] = []
+
+
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
+
+# Define users and hashed passwords for simplicity
+users = {
+    "tomas": hash_password("tomas123"),
+    "admin": hash_password("admin")
+}
+
+
+TOKEN_FILE = "./data/token_counts_rfp.json"
+
+
+def read_token_counts():
+    try:
+        with open("./data/token_counts_rfp.json", "r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+
+def write_token_counts(token_counts):
+    with open("./data/token_counts_rfp.json", "w") as f:
+        json.dump(token_counts, f)
+
+
+def get_token_count(username):
+    token_counts = read_token_counts()
+    return token_counts.get(username, 1000)  # Default to 1000 tokens if not found
+
+def update_token_count(username, count):
+    token_counts = read_token_counts()
+    token_counts[username] = count
+    write_token_counts(token_counts)
+
+def login():
+    col1, col2, col3 = st.columns([1, 1, 1])  # Create three columns with equal width
+    with col2:  # Center the input fields in the middle column
+        st.title("Login")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        
+        if st.button("Sign in"):
+            hashed_password = hash_password(password)
+            if username in users and users[username] == hashed_password:
+                token_counts = read_token_counts()
+                tokens_remaining = token_counts.get(username, 500)  # Default to 500 tokens if not found
+                
+                if tokens_remaining > 0:
+                    st.session_state.logged_in = True
+                    st.session_state.username = username
+                    st.session_state.tokens_remaining = tokens_remaining
+                    st.session_state.tokens_consumed = 0
+                    st.success("Logged in successfully!")
+                    st.experimental_rerun()  # Refresh to show logged-in state
+                else:
+                    st.error("No tokens remaining. Please contact support.")
+            else:
+                st.error("Invalid username or password")
+
+
+def logout():
+    # Clear session state on logout
+    st.session_state.logged_in = False
+    del st.session_state.username
+    del st.session_state.tokens_remaining
+    del st.session_state.tokens_consumed
+    st.success("Logged out successfully!")
+    st.experimental_rerun()  # Refresh to show logged-out state
 
 
 def get_pdf_text(pdf_docs):
@@ -291,94 +363,94 @@ def user_input(user_question, api_key):
                 #print("Response is....",response)
                 para_ = response['output_text']
                 response = response['output_text']
-                fileName = 'output.pdf'
-                #print("para_ printed here-------------------->>>",para_)
-                soup = BeautifulSoup(para_, 'html.parser')
-                # Extract the title
-                para_title = soup.title.string
-                pdf_path = fileName
-                html_string ='''
-                            <!DOCTYPE html>
-                                <html lang="en">
-                                <head>
-                                    <meta charset="UTF-8" />
-                                    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                                    <title>Document</title>
-                                    <style>
-                                    .header {
-                                        background-color: #A020F0;
-                                        color: #ffffff; /* White text */
-                                        padding: 0 px;
-                                        text-align: center;
-                                        line-height: 1.5; 
-                                        padding-top: 20 px;
-                                        font-size: 22 px;
-                                    }
-                                    .subtitle {
-                                        background-color: #D14BA1;
-                                        color: #ffffff; 
-                                        padding: 0 px;
-                                        text-align: center;
-                                        padding-top: 15 px;
-                                        line-height: 1.5; 
-                                        font-size: 18 px;
-                                    }
-                                    .content {
-                                        padding: 0 px;
-                                        line-height: 1.5; 
-                                    }
-                                    </style>
-                                </head>
-                                <body>
-                                    <logo class="logo">
-                                    <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Accenture.svg/2560px-Accenture.svg.png' width="80" height="30" />
-                                    </logo>               
-                                    <div class="header">
-                                    <h1>Bid Creation Bot!</h1>
-                                    </div>
-                                    <div class="subtitle">
-                                    <h3>''' + para_title + '''</h3>
-                                    </div>
+                num_words = len(response.split())
+                token_cost = num_words  # Each word in the response costs 1 token (adjust as needed)
+                if st.session_state.tokens_remaining > 0:
+                    st.session_state.tokens_consumed += token_cost  # Deduct tokens based on response length
+                    st.session_state.tokens_remaining -= token_cost
+                    # Update token count in JSON file
+                    token_counts = read_token_counts()
+                    token_counts[st.session_state.username] = st.session_state.tokens_remaining
+                    write_token_counts(token_counts)
 
-                                    <!-- content section -->
-                                    <div class="content"> ''' + para_ + '''</div>
-                                </body>
-                                </html>
-                            '''
+                    fileName = 'C:/Users/pranav.baviskar/Desktop/Learning/GenAI/test/output.pdf'
+                    #print("para_ printed here-------------------->>>",para_)
+                    soup = BeautifulSoup(para_, 'html.parser')
+                    # Extract the title
+                    para_title = soup.title.string
+                    pdf_path = fileName
+                    html_string ='''
+                                <!DOCTYPE html>
+                                    <html lang="en">
+                                    <head>
+                                        <meta charset="UTF-8" />
+                                        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                                        <title>Document</title>
+                                        <style>
+                                        .header {
+                                            background-color: #A020F0;
+                                            color: #ffffff; /* White text */
+                                            padding: 0 px;
+                                            text-align: center;
+                                            line-height: 1.5; 
+                                            padding-top: 20 px;
+                                            font-size: 22 px;
+                                        }
+                                        .subtitle {
+                                            background-color: #D14BA1;
+                                            color: #ffffff; 
+                                            padding: 0 px;
+                                            text-align: center;
+                                            padding-top: 15 px;
+                                            line-height: 1.5; 
+                                            font-size: 18 px;
+                                        }
+                                        .content {
+                                            padding: 0 px;
+                                            line-height: 1.5; 
+                                        }
+                                        </style>
+                                    </head>
+                                    <body>
+                                        <logo class="logo">
+                                        <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Accenture.svg/2560px-Accenture.svg.png' width="80" height="30" />
+                                        </logo>               
+                                        <div class="header">
+                                        <h1>Bid Creation Bot!</h1>
+                                        </div>
+                                        <div class="subtitle">
+                                        <h3>''' + para_title + '''</h3>
+                                        </div>
+
+                                        <!-- content section -->
+                                        <div class="content"> ''' + para_ + '''</div>
+                                    </body>
+                                    </html>
+                                '''
+                    
+                    @st.experimental_dialog("Edit the RFP", width= 'large')
+                    def edit_report():
+                        output_ = st.text_area("Edit your RFP", html_string)
+                        if st.button("Submit"):
+                            print("Inside submit button")
+                            st.session_state.vote = output_
+                            print("Opening pdf to write")
+                            with open(pdf_path, "wb") as pdf_file:
+                                print("PDF opened")
+                            
+                                pisa_status = pisa.CreatePDF(output_, dest=pdf_file)
+                            print("done with RFP")
+                            st.write("RFP Generated Successfully. Please check directory ", fileName)
+                            st.success("RFP Delivered to the location !!!")
+                            st.rerun()
+                    edit_report()
+                    st.success("RFP Delivered to the location !!!")
+                else:
+                    st.warning("You don't have enough tokens. Please contact your administrator.")
                 
-                @st.experimental_dialog("Edit the RFP", width= 'large')
-                def edit_report():
-                    output_ = st.text_area("Edit your RFP", html_string)
-                    if st.button("Submit"):
-                        print("Inside submit button")
-                        st.session_state.vote = output_
-                        print("Opening pdf to write")
-                        with open(pdf_path, "wb") as pdf_file:
-                            print("PDF opened")
-                        
-                            pisa_status = pisa.CreatePDF(output_, dest=pdf_file)
-                        print("done with RFP")
-                        st.write("RFP Generated Successfully. Please check directory ", fileName)
-                        st.success("RFP Delivered to the location !!!")
-                        st.rerun()
-                edit_report()
-                st.success("RFP Delivered to the location !!!")
+                # Display remaining tokens to the user
+                st.sidebar.text(f"Tokens Remaining: {st.session_state.tokens_remaining}")
 
-                        
-
-fname = "output.pdf"
-pdf_path = "output.pdf"
-docx_path = "output.docx"
-cv = Converter(pdf_path)
-cv.convert(docx_path)
-cv.close()
-
-with open(fname, "rb") as f:
-    st.download_button("Download .pdf version of RFP!", f, fname)
-
-with open(docx_path, "rb") as docx_file:
-    docx_bytes = docx_file.read()
-    st.download_button("Download .docx version of RFP!", data=docx_bytes, file_name="output.docx")
 
 def get_conversation_string():
     conversation_string = ""
@@ -399,7 +471,19 @@ st.markdown("""
 
 def main():
     st.header("Bid Creation Bot")
+    fname = 'C:/Users/pranav.baviskar/Desktop/Learning/GenAI/test/output.pdf'
+    pdf_path = 'C:/Users/pranav.baviskar/Desktop/Learning/GenAI/test/output.pdf'
+    docx_path = 'C:/Users/pranav.baviskar/Desktop/Learning/GenAI/test/output.docx'
+    cv = Converter(pdf_path)
+    cv.convert(docx_path)
+    cv.close()
 
+    with open(fname, "rb") as f:
+        st.download_button("Download .pdf version of RFP!", f, fname)
+
+    with open(docx_path, "rb") as docx_file:
+        docx_bytes = docx_file.read()
+        st.download_button("Download .docx version of RFP!", data=docx_bytes, file_name="output.docx")
     user_question = st.text_input("What RFP do you want to generate?", key="user_question")
     if user_question:
         m = st.markdown("""
@@ -457,8 +541,6 @@ def main():
                 step=0.05,
             )
 
-        
-
 if __name__ == "__main__":
     st.markdown('''<style>
         .stApp > header {
@@ -493,4 +575,19 @@ if __name__ == "__main__":
     }    
 
     </style>''', unsafe_allow_html=True)
-    main()
+    # Ensure session state variables are initialized
+    if "logged_in" not in st.session_state:
+        st.session_state.logged_in = False
+    if "tokens_consumed" not in st.session_state:
+        st.session_state.tokens_consumed = 0
+    if "tokens_remaining" not in st.session_state:
+        st.session_state.tokens_remaining = 0
+    
+    if st.session_state.logged_in:
+        st.sidebar.write(f"Welcome, {st.session_state.username}")
+        st.sidebar.write(f"Tokens remaining: {st.session_state.tokens_remaining}")
+        if st.sidebar.button("Logout"):
+            logout()
+        main()
+    else:
+        login()

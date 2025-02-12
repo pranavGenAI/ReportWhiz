@@ -5,7 +5,6 @@ from streamlit.components.v1 import html
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import google.generativeai as genai
-#from langchain.vectorstores import FAISS
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
@@ -211,11 +210,6 @@ st.markdown("""
     </p>
 """, unsafe_allow_html=True)
 
-
-
-
-# This is the first API key input; no need to repeat it in the main function.
-#api_key = st.secrets['GEMINI_API_KEY']
 api_key = 'AIzaSyBJJfXHfC80NWtiKGA57aO2mGsT-aD9fhQ'
 
 if 'responses' not in st.session_state:

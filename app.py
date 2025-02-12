@@ -521,7 +521,6 @@ def main():
         st.image("https://www.vgen.it/wp-content/uploads/2021/04/logo-accenture-ludo.png", width=120)
         st.markdown("")
         st.markdown("")
-        st.title("Bid Creation Bot")
         pdf_docs = st.file_uploader("Upload your Files and Click on the Submit & Process Button", accept_multiple_files=True, key="pdf_uploader")
         if st.button("Submit & Process", key="process_button") and api_key:  # Check if API key is provided before processing
             with st.spinner("Reading & Processing Content..."):
